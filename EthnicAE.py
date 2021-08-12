@@ -74,7 +74,7 @@ class EarlyStopping:
 
 class EthnicAE(nn.Module):
     def __init__(self, input_dim, encodeLayers=[], decodeLayers=[], batch_size=256, 
-            activation='elu', z_dim=32, gamma=1., n_labels=2, dropoutE=0.1, dropoutD=0.1, device="cuda"):
+            activation='elu', z_dim=32, gamma=1., n_labels=2, label_weights=None, dropoutE=0.1, dropoutD=0.1, device="cuda"):
         super(EthnicAE, self).__init__()
         self.input_dim = input_dim
         self.encodeLayers = encodeLayers
@@ -86,7 +86,7 @@ class EthnicAE(nn.Module):
         self.encoder = buildNetwork(encodeLayers+[z_dim], activation=activation, dropout=dropoutE)
         self.pred = nn.Sequential(nn.Linear(z_dim, n_labels), nn.Softmax(dim=n_labels))
         self.decoder = buildNetwork([z_dim]+decodeLayers, activation=activation, dropout=dropoutD)
-        self.ce_loss = nn.CrossEntropyLoss().to(device)
+        self.ce_loss = nn.CrossEntropyLoss(weight=torch.FloatTensor(label_weights)).to(device)
         self.device = device
 
     def save_model(self, path):
