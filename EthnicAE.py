@@ -148,8 +148,9 @@ class EthnicAE(nn.Module):
             label_loss_val = 0
             label_mse_val = 0
             label_ce_val = 0
-            for j, (x_batch, y_batch) in enumerate(dataloader_label):
+            for j, (x_batch, mask_batch, y_batch) in enumerate(dataloader_label):
                 x_tensor = Variable(x_batch).to(self.device)
+                mask_batch = Variable(mask_batch).to(self.device)
                 y_tensor = Variable(y_batch).to(self.device)
                 _, x_, y_ = self.forward(x_tensor)
                 mse_loss = torch.mean(mask_batch*(x_ - x_tensor)**2)
